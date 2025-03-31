@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    stages {
+        stage("clean workspace") {
+            steps {
+                cleanWs()
+            }
+        }
+        stage("clone script repo") {
+            steps{
+                git branch: "$branchname", credentialsId: "jenkins-to-gitlab-clone-using-ssh", url: "git@gitlab.varaha.xyz:devops-automations/terraform-scripts/ec2.git"
+            }
+        }
+        stage("format the script") {
+            steps{
+                sh "terraform fmt"
+            }
+        }
+        stage("initialise the modules") {
+            steps{
+                sh "terraform init"
+            }
+        }
+        stage("validate syntx") {
+            steps{
+                sh "terraform validate"
+            }
+        }
+        stage("check the plan") {
+            steps{
+                sh "terraform plan"
+            }
+        }
+        stage("destroy the changes") {
+            steps{
+                sh "terraform destroy --auto-approve"
+            }
+        }
+        stage("push the state file to SCM") {
+            steps{
+                sh 'git add .'
+                sh 'git commit -m "Added state file"'
+                sh 'git push origin main'
+            }
+        }
+    }
+}
