@@ -1,0 +1,6 @@
+echo ${BUILD_NUMBER}
+echo ${BUILD_ID}
+echo ${GIT_BRANCH}
+echo $branch
+echo ${GIT_URL}
+echo ${GIT_COMMIT}
