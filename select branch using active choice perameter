@@ -1,0 +1,17 @@
+def gettags = ("git ls-remote -h git@gitlab.varaha.xyz:back-end/login-service.git").execute()
+return gettags.text.readLines().collect { 
+  it.split()[1].replaceAll('refs/heads/', '').replaceAll('refs/tags/', '').replaceAll("\\^\\{\\}", '')
+}
+
+
+1st line = change gitlab repository url
+
+gui = check this project is parameter
+Nane 
+   branchname
+check script->groovy script
+   paste syntax
+
+   uncheck use groovy sandbox
+
+   active groovy script
