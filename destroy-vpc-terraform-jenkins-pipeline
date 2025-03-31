@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    stages {
+        stage("clone script repo") {
+            steps{
+                git branch: "$branchname", credentialsId: "jenkins-to-gitlab-clone-using-ssh", url: "git@gitlab.varaha.xyz:devops-automations/terraform-scripts/vpc-provision.git"
+            }
+        }
+        stage("format the script") {
+            steps{
+                sh "terraform fmt"
+            }
+        }
+        stage("initialise the modules") {
+            steps{
+                sh "terraform init"
+            }
+        }
+        stage("validate syntx") {
+            steps{
+                sh "terraform validate"
+            }
+        }
+        stage("check the plan") {
+            steps{
+                sh "terraform plan"
+            }
+        }
+        stage("apply the changes") {
+            steps{
+                sh "terraform destroy --auto-approve"
+            }
+        }
+        stage("copy the terraform state file") {
+            steps{
+                sh "git add *"
+                sh 'git commit -m "pushing state file"'
+                sh 'git push --set-upstream origin $branch'
+            }
+        }
+        stage("clean workspace") {
+            steps{
+                cleanWs()
+            }
+        }
+    }
+}
